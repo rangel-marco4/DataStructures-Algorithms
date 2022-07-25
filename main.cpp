@@ -1,161 +1,140 @@
 //
 //  main.cpp
-//  StackImplementation (Using Arrays)
+//  QueueImplementation
 //
 //  Created by Marco Rangel on 7/23/22.
+//
 
 /*
- 
  Operations:
-    push() - place an item onto the stack
-    pop() - return the item at the top of the stack and remove it
-    isEmpty() - check if stack is empty
-    isfull() - check if stack is full
-    peek() - access the item at the i position
-    count() - get the number of items in the stack
-    change() - change the item at the i position
-    display() - display all the items in the stack
- 
+    enqueue - add element at end of queue
+    dequeue - removes and returns element at the front of the queue
+    isEmpty - checks if queue is empty
+    ifFull - checks if queue is full
+    count - counts the number of elements in queue
+    display - shows the contents of queue
+    
  */
 
-
 #include <iostream>
+#include <vector>
 using namespace std;
 
-// stack class
-class Stack{
+#define max 10 // defining max length of the queue
+
+// Queue class
+class Queue{
 private:
-    int top;
-    int arr[5];
+    int arr[max];
+    int rear;
+    int front;
     
 public:
-    Stack();
-    bool isEmpty();
+    Queue();
+    void enqueue(int data);
+    int dequeue();
     bool isFull();
-    void push(int data);
-    int pop();
     int count();
-    int peek();
-    void change(int idx, int data);
+    bool isEmpty();
     void display();
 };
 
 // constructor
-Stack::Stack(){
-    top = -1;
-    for(int i = 0; i < 5; i++){
+Queue::Queue(){
+    front = -1;
+    rear = -1;
+    for(int i = 0; i < max; i++){
         arr[i] = 0;
     }
 }
 
-// is empty
-bool Stack::isEmpty(){
-    return (top == -1) ? true : false;
-}
-
-// is full
-bool Stack::isFull(){
-    return (top == 4) ? true : false;
-}
-
-// push value on stack
-void Stack::push(int data){
-    if(isFull()){
-        cout << "Stack Overflow" << endl;
-    }
-    else{
-        top++;
-        arr[top] = data;
-    }
-}
-
-// pop value from stack
-int Stack::pop(){
+// add to end of queue
+void Queue::enqueue(int data){
     if(isEmpty()){
-        cout << "Stack Underflow" << endl;
-        return -1;
+        rear = 0;
+        front = 0;
+    }
+    else if(isFull()){
+        cout << "Queue is full, Overflow!" << endl;
+        return;
     }
     else{
-        int topVal = arr[top];
-        arr[top] = 0;
-        top--;
-        return topVal;
+        rear++;
+    }
+    arr[rear] = data;
+}
+
+// remove from queue
+int Queue::dequeue(){
+    int popVal = 0;
+    if(isEmpty()){
+        cout << "Queue is empty, Underflow occurred!" << endl;
+        return 0;
+    }
+    else if(front == rear){
+        popVal = arr[front];
+        arr[front] = 0;
+        front = -1;
+        rear = -1;
+        return popVal;
+    }
+    else{
+        popVal = arr[front];
+        arr[front] = 0;
+        front++;
+        return popVal;
+        
     }
 }
 
-// count function
-int Stack::count(){
-    if(isEmpty()){
-        cout << "Stack is empty" << endl;
-        return -1;
-    }
-    else{
-        int count = 0;
-        for(int i = 0; i < 5; i++){
-            (arr[i] == 0) ? count*1 : count++;
-        }
-        return count;
-    }
+// checks if full
+bool Queue::isFull(){
+    return (rear != (max-1)) ? false : true;
 }
 
-// peek function
-int Stack::peek(){
-    if(isEmpty()){
-        cout << "Stack is empty" << endl;
-        return -1;
-    }
-    else{
-        return arr[top];
-    }
+// checks if empty
+bool Queue::isEmpty(){
+    return ((front == -1) && (rear == -1)) ? true : false;
 }
 
-// change function
-void Stack::change(int idx, int data){
+// counts the number of elements in queue
+int Queue::count(){
+    int count = 0;
     if(isEmpty()){
-        cout << "Stack is empty" << endl;
+        return 0;
     }
-    else{
-        if(idx < 5){
-            cout << "Element change at index (" << idx << ") from " << arr[idx];
-            arr[idx] = data;
-            cout << " to " << arr[idx] << endl;
-        }
-        else{
-            cout << "Provided index is out of range" << endl;
+    else if (isFull()){
+        return max;
+    }
+    else {
+        for (int i = 0; i < max; i++){
+            (arr[i] != 0) ? count++ : count*1;
         }
     }
+    return count;
 }
 
-// display function
-void Stack::display(){
-    cout << "Stack values are: " << endl;
-    for (int i = 0; i < 5; i++){
-        cout << i << ": " << arr[i] << endl;
+// displays the elements in queue
+void Queue::display(){
+    cout << "Elements in Queue: ";
+    for(int i = 0; i < max; i++){
+        cout << arr[i] << " ";
     }
-}
-
-
-int main(){
-    
-    Stack s;
-    s.push(13);
-    s.push(3);
-    s.push(55);
-    s.push(77);
-    s.push(32);
-    
-    s.display();
-    
-    cout << "Popped: " << s.pop() << endl;
-    
-    s.display();
-    
-    s.change(3, 88);
     cout << endl;
-    s.display();
-    cout << endl;
-    cout << "Peek at top value: " << s.peek() << endl;
+}
+int main(int argc, const char * argv[]) {
+    Queue q;
+    q.enqueue(10);
+    q.enqueue(11);
+    q.enqueue(14);
+    q.enqueue(19);
+    q.display();
     
+    cout << "Number of elements in Queue: " << q.count() << endl;
+    
+    q.dequeue();
+    cout << "----Elements after dequeue----" << endl;
+    q.display();
     
     return 0;
 }
